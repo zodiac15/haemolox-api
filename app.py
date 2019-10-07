@@ -4,6 +4,11 @@ import resources
 
 app = Flask(__name__)
 api = Api(app)
+
+@app.route("/")
+def index():
+    return "hello world"
+
 # bind resources to endpoints
 api.add_resource(resources.CreateUser, '/api/createuser')
 api.add_resource(resources.AuthenticateUser, '/api/authenticate')
