@@ -1,5 +1,7 @@
 from flask_restful import Resource, reqparse
 import psycopg2
+from flask import jsonify
+import json
 
 # create db instance
 with psycopg2.connect(host="ec2-174-129-241-114.compute-1.amazonaws.com",
@@ -52,15 +54,17 @@ with psycopg2.connect(host="ec2-174-129-241-114.compute-1.amazonaws.com",
                 blood_grp = str(args['blood_grp'])
                 age = str(args['age'])
 
-                sql = "INSERT INTO public.user (`first_name`, `last_name`, `email`, `password`," \
-                      " `phone_number`, `address`, `state`, `city`, `blood_grp`, `age`) " \
+                sql = "INSERT INTO public.user (first_name, last_name, email, password," \
+                      " phone_number, address, state, city, blood_grp, age) " \
                       "VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(
                     f_name, l_name, email, password, p_number, address, state, city, blood_grp, age)
                 curr.execute(sql)
                 db.commit()
-                return {'status': 'user created'}
+                return {'status': 'user created',
+                        'created': True}
             except Exception as e:
-                return {'error': str(e)}
+                return {'error': str(e),
+                        'created': False}
 
 
     class AuthenticateUser(Resource):
@@ -79,7 +83,8 @@ with psycopg2.connect(host="ec2-174-129-241-114.compute-1.amazonaws.com",
                 db.commit()
                 res = curr.fetchone()
                 if res is None:
-                    return {'error': 'User does not exist'}
+                    return {'error': 'User does not exist',
+                            'Authenticated': False}
                 else:
                     password_db = res[0]
                     if password == password_db:
@@ -88,3 +93,48 @@ with psycopg2.connect(host="ec2-174-129-241-114.compute-1.amazonaws.com",
                         return {'Authenticated': False}
             except Exception as e:
                 return {'error': str(e)}
+
+
+    class FindUser(Resource):
+        def get(self):
+            try:
+                parser = reqparse.RequestParser()
+                parser.add_argument('city', type=str, help='City')
+                arg = parser.parse_args()
+                city = arg['city']
+
+                sql = "Select first_name,last_name,blood_grp,email from public.user where city ='{}'".format(str(city))
+                curr.execute(sql)
+                db.commit()
+                res = curr.fetchall()
+
+                return_list = []
+                for result in res:
+                    dic = {}
+                    dic['first_name'] = result[0]
+                    dic['last_name'] = result[1]
+                    dic['blood_grp'] = result[2]
+                    dic['email'] = result[3]
+                    return_list.append(dic)
+
+                return jsonify(return_list)
+            except Exception as e:
+                return {'error': str(e)}
+
+
+    class DeleteUser(Resource):
+        def get(self):
+            try:
+                parser = reqparse.RequestParser()
+                parser.add_argument('email', type=str, help='Email of user')
+                arg = parser.parse_args()
+                email = arg['email']
+
+                sql = "DELETE FROM public.user WHERE email = '{}'".format(str(email))
+                curr.execute(sql)
+                db.commit()
+                return {'status': 'user deleted',
+                        'deleted': True}
+            except Exception as e:
+                return {'error': str(e),
+                        'deleted': False}
