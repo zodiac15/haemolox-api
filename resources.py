@@ -92,7 +92,8 @@ with psycopg2.connect(host="ec2-174-129-241-114.compute-1.amazonaws.com",
                     else:
                         return {'Authenticated': False}
             except Exception as e:
-                return {'error': str(e)}
+                return {'error': str(e),
+                        'Authenticated': False}
 
 
     class FindUser(Resource):
@@ -138,3 +139,48 @@ with psycopg2.connect(host="ec2-174-129-241-114.compute-1.amazonaws.com",
             except Exception as e:
                 return {'error': str(e),
                         'deleted': False}
+
+
+    class CreateRequest(Resource):
+        def post(self):
+            try:
+                parser = reqparse.RequestParser()
+                parser.add_argument('from', type=str, help='Email of user')
+                parser.add_argument('to', type=str, help='email of requested user')
+                arg = parser.parse_args()
+
+                from_id = arg['from']
+                to_id = arg['to']
+
+                sql = "insert into public.request(from_id, to_id) values ('{}','{}')".format(from_id, to_id)
+                curr.execute(sql)
+                db.commit()
+                return {'status': 'request created',
+                        'created': True}
+            except Exception as e:
+                return {'error': str(e),
+                        'created': False}
+
+
+    class UpdateRequest(Resource):
+        def post(self):
+            try:
+                parser = reqparse.RequestParser()
+                parser.add_argument('from', type=str, help='Email of user')
+                parser.add_argument('to', type=str, help='email of requested user')
+                parser.add_argument('accepted', type=str, help='Email of user')
+                arg = parser.parse_args()
+
+                from_id = arg['from']
+                to_id = arg['to']
+                accepted = arg['accepted']
+
+                sql = "update public.request set accepted='{}' where from_id='{}' and to_id='{}'".format(accepted,
+                                                                                                         from_id, to_id)
+                curr.execute(sql)
+                db.commit()
+                return {'status': 'request updated',
+                        'updated': True}
+            except Exception as e:
+                return {'error': str(e),
+                        'updated': False}
