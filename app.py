@@ -14,6 +14,8 @@ def index():
 # bind resources to endpoints
 api.add_resource(resources.CreateUser, '/api/createuser')
 api.add_resource(resources.FindUser, '/api/finduser')
+api.add_resource(resources.CreateRequest, '/api/createrequest')
+api.add_resource(resources.UpdateRequest, '/api/updaterequest')
 api.add_resource(resources.DeleteUser, '/api/deleteuser')
 api.add_resource(resources.AuthenticateUser, '/api/authenticate')
 
