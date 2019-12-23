@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="card-content" style="text-align: center">
+        <br><br>
+        <i class="large material-icons" style="color: gray;font-size: 150px">account_circle</i>
+        <br>
+        <h3>{{ name }}</h3>
+        <br><br>
+        <form action="/logout" method="post">
+            <button class="btn waves-effect waves-light" name="logout" type="submit">Log-Out</button>
+        </form>
+        <br><br>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul class=flashes style="text-align: center">
+                    {% for message in messages %}
+                        <li style="color: green">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        <h2 class='orange-text text-accent-3'>Requests</h2>
+
+        <br><br>
+        <div class="row">
+            {% for person in result %}
+                <div class="col s12 m4">
+                    <div class="card" style="text-align: center;">
+                        <div class="card-content">
+                            <i class="material-icons large" style="font-size: 140px">account_circle</i>
+                            <span class="card-title">{{ person['name'] }}</span>
+                            <p>Age:{{ person['age'] }}</p>
+                            <p>City:{{ person['city'].capitalize() }}</p>
+                        </div>
+                        <div class="card-action">
+                            <form action="/accept" method="post">
+                                <input type="hidden" id="email" name="email" value="{{ person['email'] }}">
+                                <button class="btn waves-effect waves-light orange accent-3" name="submit"
+                                        type="submit">
+                                    Accept
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+
+        </div>
+    </div>
+{% endblock %}

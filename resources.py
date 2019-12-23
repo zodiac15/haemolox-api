@@ -4,10 +4,10 @@ from flask import jsonify
 import json
 
 # create db instance
-with psycopg2.connect(host="ec2-174-129-241-114.compute-1.amazonaws.com",
-                      database="de3svla4ul5cod",
-                      user="tbnidoxxgmmhoq",
-                      password="cbc6e81fbe5593300fa93386ae6e47497595a23f0b60726ff55c47c54b306f97"
+with psycopg2.connect(host="host",
+                      database="db",
+                      user="user",
+                      password="password"
                       ) as db:
     curr = db.cursor()
 
@@ -88,23 +88,33 @@ with psycopg2.connect(host="ec2-174-129-241-114.compute-1.amazonaws.com",
                 else:
                     password_db = res[0]
                     if password == password_db:
-                        return {'Authenticated': True}
+                        sql1 = "select first_name,last_name from public.user where email ='{}'".format(str(username))
+                        curr.execute(sql1)
+                        db.commit()
+                        res = curr.fetchone()
+                        f_name = res[0]
+                        l_name = res[1]
+                        name = f_name + " " + l_name
+                        return {'Authenticated': True,
+                                'Name': name}
                     else:
-                        return {'Authenticated': False}
+                        return {'error': 'Wrong Password',
+                                'Authenticated': False}
             except Exception as e:
                 return {'error': str(e),
                         'Authenticated': False}
 
 
     class FindUser(Resource):
-        def get(self):
+        def post(self):
             try:
                 parser = reqparse.RequestParser()
                 parser.add_argument('city', type=str, help='City')
                 arg = parser.parse_args()
                 city = arg['city']
 
-                sql = "Select first_name,last_name,blood_grp,email from public.user where city ='{}'".format(str(city))
+                sql = "Select first_name,last_name,blood_grp,email,age from public.user where city ='{}'".format(
+                    str(city))
                 curr.execute(sql)
                 db.commit()
                 res = curr.fetchall()
@@ -112,13 +122,13 @@ with psycopg2.connect(host="ec2-174-129-241-114.compute-1.amazonaws.com",
                 return_list = []
                 for result in res:
                     dic = {}
-                    dic['first_name'] = result[0]
-                    dic['last_name'] = result[1]
+                    dic['name'] = result[0] + " " + result[1]
+                    dic['age'] = result[4]
                     dic['blood_grp'] = result[2]
                     dic['email'] = result[3]
                     return_list.append(dic)
 
-                return jsonify(return_list)
+                return jsonify({'users': return_list})
             except Exception as e:
                 return {'error': str(e)}
 
@@ -184,3 +194,31 @@ with psycopg2.connect(host="ec2-174-129-241-114.compute-1.amazonaws.com",
             except Exception as e:
                 return {'error': str(e),
                         'updated': False}
+
+
+    class Requests(Resource):
+        def post(self):
+            try:
+                parser = reqparse.RequestParser()
+                parser.add_argument('email', type=str, help='email')
+                arg = parser.parse_args()
+                email = arg['email']
+
+                sql = "Select u.first_name,u.last_name,u.city,r.from_id,u.age from public.user as u,public.request as r where u.email = r.from_id and r.to_id ='{}' and r.accepted is NULL".format(
+                    str(email))
+                curr.execute(sql)
+                db.commit()
+                res = curr.fetchall()
+
+                return_list = []
+                for result in res:
+                    dic = {}
+                    dic['name'] = result[0] + " " + result[1]
+                    dic['age'] = result[4]
+                    dic['city'] = result[2]
+                    dic['email'] = result[3]
+                    return_list.append(dic)
+
+                return jsonify({'users': return_list})
+            except Exception as e:
+                return {'error': str(e)}

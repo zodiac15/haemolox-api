@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="card-content">
+        <br><br>
+        <h2 class='orange-text text-accent-3 center'><strong>Find Donors</strong></h2>
+        <br>
+        <div class="row" style="text-align:center">
+            <br>
+            <form action="/validate/search" method="post">
+                <div class="container">
+                    <div class="input-field col s8 ">
+                        <input class="validate" id="city" style="text-transform: uppercase" name="city" type="text">
+                        <label for="city">City</label>
+                    </div>
+                </div>
+                <div class="col s2">
+                    <button class="btn-floating waves-effect waves-light" type="submit" name="submit">
+                        <i class="material-icons">search</i>
+                    </button>
+                </div>
+            </form>
+        </div>
+        <br>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul class=flashes style="text-align: center">
+                    {% for message in messages %}
+                        <li style="color: green">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        <div class="divider"></div>
+        <h2 style="text-align: center">{{ city }}</h2>
+        <div class="row">
+            {% for person in result %}
+                <div class="col s12 m4">
+                    <div class="card" style="text-align: center;">
+                        <div class="card-content">
+                            <i class="material-icons large" style="font-size: 140px">account_circle</i>
+                            <span class="card-title">{{ person['name'] }}</span>
+                            <p>Age:{{ person['age'] }}</p>
+                            <p>Blood Group:{{ person['blood_grp'] }}</p>
+                        </div>
+                        <div class="card-action">
+                            <form action="/contact" method="post">
+                                <input type="hidden" id="email" name="email" value="{{ person['email'] }}">
+                                <button class="btn waves-effect waves-light orange accent-3" name="submit"
+                                        type="submit">
+                                    Contact
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

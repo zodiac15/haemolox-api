@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title> {{ title }} </title>
+    <link href="/static/pages/logo1.png" rel="icon" sizes="32x32">
+
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import materialize.css-->
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+
+</head>
+
+<body bgcolor="#e0e0e0">
+<header>
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/js/materialize.min.js"></script>
+    <script language="javascript" type="text/javascript">
+
+
+        $(document).ready(function () {
+            $(".button-collapse").sideNav();//mobile screen menu init
+            $('.sidenav').sidenav();
+
+        });
+    </script>
+    <nav class="white">
+        <div class="nav-wrapper ">
+            <a href="/" class="brand-logo"><img src="/static/pages/logo.png" height="60px" width="160px"></a>
+            <a href="#" data-target="side-menu" class="sidenav-trigger"><i
+                    class="material-icons black-text">menu</i></a>
+            <ul id="nav-mobile" class="right hide-on-med-and-down">
+                <li><a href="#" class=" black-text">Hey, {{ session['name'] }}</a></li>
+                <li><a href="/user"><i class="material-icons  black-text">account_circle</i></a></li>
+                {% if 'logged_in' not in session %}
+                <li><a href="/register" class=" black-text">Register</a></li>
+                {% endif %}
+                <li><a href="/donors" class=" black-text">Find Donors</a></li>
+            </ul>
+
+
+        </div>
+    </nav>
+    <ul class="sidenav" id="side-menu">
+        <li><a class=" black-text" href="{{ url_for('user') }}"><i class="material-icons">account_circle</i></a></li>
+        <li><a class=" black-text" href="{{ url_for('login') }}">Sign in</a></li>
+        <li><a class=" black-text" href="{{ url_for('donors') }}">Find Donors</a></li>
+    </ul>
+</header>
+<main>
+    <div class="container">
+
+        <div class="row">
+            <div>
+                <div class="card white z-depth-3">
+
+                    <br>
+                    {% block content %}
+                    {% endblock %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer class="page-footer grey darken-3">
+    <div class="container">
+        <div class="row">
+            <div class="col l6 s12">
+
+                <h5 class="white-text">Project by:</h5>
+                <ul>
+                    <li><a class="white-text" href="https://github.com/zodiac15">Ayush</a></li>
+                </ul>
+            </div>
+
+            <div class="col l3 s12">
+                <h5 class="white-text">Links</h5>
+                <ul>
+                    <li><a class="white-text" href='/login'>Login</a></li>
+                    <li><a class="white-text" href="/register">Register</a></li>
+                    <li><a class="white-text" href="/donors">Donors</a></li>
+                    <li><a class="white-text" href="/home">Home</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="footer-copyright">
+        <div class="container">
+            <div class="row">
+                <div class="col s6">
+                    Made by <a class="orange-text text-lighten-3" href="http://materializecss.com">Materialize</a>
+                </div>
+                <div class="col s6">
+                    Follow this project on <a class="orange-text text-lighten-3"
+                                              href="https://github.com/ayush12451/blood_bank">Github</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</footer>
+<!--JavaScript at end of body for optimized loading-->
+<script src="https://code.jquery.com/jquery-2.1.1.min.js" type="text/javascript"></script>
+</body>
+
+</html>
