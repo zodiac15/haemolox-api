@@ -4,10 +4,10 @@ from flask import jsonify
 import json
 
 # create db instance
-with psycopg2.connect(host="host",
-                      database="db",
-                      user="user",
-                      password="password"
+with psycopg2.connect(host="ec2-174-129-241-114.compute-1.amazonaws.com",
+                      database="de3svla4ul5cod",
+                      user="tbnidoxxgmmhoq",
+                      password="cbc6e81fbe5593300fa93386ae6e47497595a23f0b60726ff55c47c54b306f97"
                       ) as db:
     curr = db.cursor()
 
