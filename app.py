@@ -26,7 +26,7 @@ def donors():
 def search_result():
     city = request.form.get('city').lower()
     params = {'city': city}
-    response = requests.post('/api/finduser', data=params).json()
+    response = requests.post('https://haemolox-api.herokuapp.com/api/finduser', data=params).json()
 
     return render_template('donors.html', title='Haemolox | Find Donors', city=city.capitalize(),
                            result=response['users'])
@@ -37,7 +37,7 @@ def contact():
     email = request.form.get('email')
     params = {'to': email,
               'from': session['email']}
-    response = requests.post('/api/createrequest', data=params).json()
+    response = requests.post('https://haemolox-api.herokuapp.com/api/createrequest', data=params).json()
     if response['created']:
         flash('The user was contacted')
         return redirect(url_for('donors'))
@@ -51,7 +51,7 @@ def accept():
     params = {'from': email,
               'to': session['email'],
               'accepted': '1'}
-    response = requests.post('/api/updaterequest', data=params).json()
+    response = requests.post('https://haemolox-api.herokuapp.com/api/updaterequest', data=params).json()
     if response['updated']:
         # mail
         flash('The user was contacted')
@@ -81,7 +81,7 @@ def validate_register():
     params = {'first_name': f_name.capitalize(), 'last_name': l_name.capitalize(), 'email': email, 'password': password,
               'phone_no': p_number,
               'address': address, 'state': state, 'city': city, 'blood_grp': blood_grp, 'age': age}
-    response = requests.post("/api/createuser", data=params).json()
+    response = requests.post("https://haemolox-api.herokuapp.com/api/createuser", data=params).json()
     if response['created']:
         session['name'] = f_name + " " + l_name
         session['email'] = email
@@ -96,7 +96,7 @@ def validate_register():
 def user():
     if 'logged_in' in session and session['logged_in'] is True:
         params = {'email': session['email']}
-        response = requests.post('/api/requests', data=params).json()
+        response = requests.post('https://haemolox-api.herokuapp.com/api/requests', data=params).json()
         if 'users' in response:
             return render_template('user.html', name=session['name'], title='Haemolox | User', result=response['users'])
         else:
@@ -119,7 +119,7 @@ def validate_login():
     password = hashlib.sha1(request.form.get('password').encode('utf-8')).hexdigest()
 
     params = {'email': email, 'password': password}
-    response = requests.post("/api/authenticate", data=params).json()
+    response = requests.post("https://haemolox-api.herokuapp.com/api/authenticate", data=params).json()
     if response['Authenticated'] is False or 'Authenticated' not in response:
         return render_template('login.html', error=response['error'])
 
