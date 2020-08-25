@@ -41,7 +41,9 @@ def contact():
     if response['created']:
         flash('The user was contacted')
         return redirect(url_for('donors'))
-
+    else:
+        flash(response['error'])
+        return redirect(url_for('donors'))
 
 @app.route("/accept", methods=['GET', 'POST'])
 def accept():
@@ -95,7 +97,10 @@ def user():
     if 'logged_in' in session and session['logged_in'] is True:
         params = {'email': session['email']}
         response = requests.post('http://localhost:5000/api/requests', data=params).json()
-        return render_template('user.html', name=session['name'], title='Haemolox | User', result=response['users'])
+        if 'users' in response:
+            return render_template('user.html', name=session['name'], title='Haemolox | User', result=response['users'])
+        else:
+            return render_template('user.html', name=session['name'], title='Haemolox | User')
     else:
         return redirect(url_for('login'))
 
