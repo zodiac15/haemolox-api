@@ -1,14 +1,18 @@
 from flask_restful import Resource, reqparse
-import psycopg2
 from flask import jsonify
 import json
+import sqlite3
 
 # create db instance
+<<<<<<< HEAD
+with sqlite3.connect('data.sqlite',check_same_thread=False) as db:
+=======
 with psycopg2.connect(host="ec2-174-129-241-114.compute-1.amazonaws.com",
                       database="de3svla4ul5cod",
                       user="tbnidoxxgmmhoq",
                       password="cbc6e81fbe5593300fa93386ae6e47497595a23f0b60726ff55c47c54b306f97"
                       ) as db:
+>>>>>>> 91df0befdf77f0a3ab21be44e0acd39fb19ed8e8
     curr = db.cursor()
 
 
@@ -54,7 +58,7 @@ with psycopg2.connect(host="ec2-174-129-241-114.compute-1.amazonaws.com",
                 blood_grp = str(args['blood_grp'])
                 age = str(args['age'])
 
-                sql = "INSERT INTO public.user (first_name, last_name, email, password," \
+                sql = "INSERT INTO user (first_name, last_name, email, password," \
                       " phone_number, address, state, city, blood_grp, age) " \
                       "VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(
                     f_name, l_name, email, password, p_number, address, state, city, blood_grp, age)
@@ -78,7 +82,7 @@ with psycopg2.connect(host="ec2-174-129-241-114.compute-1.amazonaws.com",
                 username = arg['email']
                 password = arg['password']
 
-                sql = "select password from public.user where email ='{}'".format(str(username))
+                sql = "select password from user where email ='{}'".format(str(username))
                 curr.execute(sql)
                 db.commit()
                 res = curr.fetchone()
@@ -88,7 +92,7 @@ with psycopg2.connect(host="ec2-174-129-241-114.compute-1.amazonaws.com",
                 else:
                     password_db = res[0]
                     if password == password_db:
-                        sql1 = "select first_name,last_name from public.user where email ='{}'".format(str(username))
+                        sql1 = "select first_name,last_name from user where email ='{}'".format(str(username))
                         curr.execute(sql1)
                         db.commit()
                         res = curr.fetchone()
@@ -113,7 +117,7 @@ with psycopg2.connect(host="ec2-174-129-241-114.compute-1.amazonaws.com",
                 arg = parser.parse_args()
                 city = arg['city']
 
-                sql = "Select first_name,last_name,blood_grp,email,age from public.user where city ='{}'".format(
+                sql = "Select first_name,last_name,blood_grp,email,age from user where city ='{}'".format(
                     str(city))
                 curr.execute(sql)
                 db.commit()
@@ -141,7 +145,7 @@ with psycopg2.connect(host="ec2-174-129-241-114.compute-1.amazonaws.com",
                 arg = parser.parse_args()
                 email = arg['email']
 
-                sql = "DELETE FROM public.user WHERE email = '{}'".format(str(email))
+                sql = "DELETE FROM user WHERE email = '{}'".format(str(email))
                 curr.execute(sql)
                 db.commit()
                 return {'status': 'user deleted',
@@ -162,7 +166,7 @@ with psycopg2.connect(host="ec2-174-129-241-114.compute-1.amazonaws.com",
                 from_id = arg['from']
                 to_id = arg['to']
 
-                sql = "insert into public.request(from_id, to_id) values ('{}','{}')".format(from_id, to_id)
+                sql = "insert into request(from_id, to_id) values ('{}','{}')".format(from_id, to_id)
                 curr.execute(sql)
                 db.commit()
                 return {'status': 'request created',
@@ -185,7 +189,7 @@ with psycopg2.connect(host="ec2-174-129-241-114.compute-1.amazonaws.com",
                 to_id = arg['to']
                 accepted = arg['accepted']
 
-                sql = "update public.request set accepted='{}' where from_id='{}' and to_id='{}'".format(accepted,
+                sql = "update request set accepted='{}' where from_id='{}' and to_id='{}'".format(accepted,
                                                                                                          from_id, to_id)
                 curr.execute(sql)
                 db.commit()
@@ -204,7 +208,7 @@ with psycopg2.connect(host="ec2-174-129-241-114.compute-1.amazonaws.com",
                 arg = parser.parse_args()
                 email = arg['email']
 
-                sql = "Select u.first_name,u.last_name,u.city,r.from_id,u.age from public.user as u,public.request as r where u.email = r.from_id and r.to_id ='{}' and r.accepted is NULL".format(
+                sql = "Select u.first_name,u.last_name,u.city,r.from_id,u.age from user as u,request as r where u.email = r.from_id and r.to_id ='{}' and r.accepted is NULL".format(
                     str(email))
                 curr.execute(sql)
                 db.commit()
