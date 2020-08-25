@@ -4,15 +4,8 @@ import json
 import sqlite3
 
 # create db instance
-<<<<<<< HEAD
+
 with sqlite3.connect('data.sqlite',check_same_thread=False) as db:
-=======
-with psycopg2.connect(host="ec2-174-129-241-114.compute-1.amazonaws.com",
-                      database="de3svla4ul5cod",
-                      user="tbnidoxxgmmhoq",
-                      password="cbc6e81fbe5593300fa93386ae6e47497595a23f0b60726ff55c47c54b306f97"
-                      ) as db:
->>>>>>> 91df0befdf77f0a3ab21be44e0acd39fb19ed8e8
     curr = db.cursor()
 
 
